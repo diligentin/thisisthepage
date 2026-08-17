@@ -18,12 +18,8 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
-.auto-grid{  display: grid;  gap: 9px;
-  width: 100%;  margin: 0 auto;
-  /* desktop: zawsze 6 kolumn o stałej szerokości */  grid-template-columns: repeat(6, 150px);  justify-content: center; /* gdy się nie mieści, to tylko obcina layout w ramach kontenera */  align-items: start;}
-.card img{  width: 100%;  height: auto;  display: block;}
+.auto-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:9px; justify-items:center; width:fit-content; margin:0 auto;}
 
-  
 .card { text-decoration:none; color:white; text-align:center; }
 .card img { transition: filter .25s ease;}
 .card:hover img { transform: none; filter: brightness(0.8);}
@@ -34,16 +30,9 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 .card.tall img { width:100%; max-width:150px; aspect-ratio:5/9; object-fit:cover;}
 
 @media(max-width:600px){
-  .auto-grid{
-    grid-template-columns: repeat(3, 90px); /* stała szerokość kolumn na tel */
-    gap: 9px;
-    margin-bottom: 9px;
-    justify-content: center;
-  }
+  .auto-grid { grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:9px; }
+  .section-title-img { width:58%; }
 }
-
-
-
 </style>
 </head>
 
