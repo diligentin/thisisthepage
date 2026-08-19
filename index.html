@@ -34,7 +34,14 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
   .auto-grid { grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:9px; }
   .section-title-img { width:58%; }
 
-  /* --- TITLES (desktop) --- */
+  /* TITLES (mobile) */
+  .section-block .titles-flex > .card{
+    flex: 0 0 calc((100% - 2 * 9px) / 3);
+    max-width: calc((100% - 2 * 9px) / 3);
+  }
+}
+
+/* TITLES (desktop) - POZA media query */
 .section-block .titles-flex{
   display:flex;
   flex-wrap:wrap;
@@ -50,15 +57,6 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
   box-sizing:border-box;
 }
 
-/* --- Mobile --- */
-@media(max-width:600px){
-  .auto-grid { grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:9px; }
-  .section-title-img { width:58%; }
-
-  .section-block .titles-flex > .card{
-    flex: 0 0 calc((100% - 2 * 9px) / 3);
-    max-width: calc((100% - 2 * 9px) / 3);
-  }
 
 }
 
