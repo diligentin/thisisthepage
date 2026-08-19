@@ -34,16 +34,32 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
   .section-title-img { width:58%; }
 
 
-  /* TITLES = flex, żeby ostatni rząd się wyśrodkował */
-.titles-flex{ display:flex; flex-wrap:wrap; gap:9px; justify-content:center; width:100%; margin:0 auto; }
-
-/* Każda karta ma mieć “szerokość pod 6 kolumn” (na desktopie) */
-.titles-flex .card{ flex: 0 0 calc((100% - 5 * 9px) / 6);}
-
-/* przy <=600px ma być 3 na wiersz */
-@media(max-width:600px){ 
-  .titles-flex .card{  flex-basis: calc((100% - 2 * 9px) / 3);  }
+/* T I T L E S  (flex, ale z “gridową” geometrią) */
+.titles-flex{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px !important;
+  justify-content:center;
+  width:100%;
+  margin:0 auto;
 }
+
+/* każda karta ma mieć szerokość jak kolumna z 6/3 */
+.titles-flex .card{
+  flex: 0 0 calc((100% - 5 * 9px) / 6);
+  max-width: calc((100% - 5 * 9px) / 6);
+  /* żeby nic nie rozszerzało i nie psuło liczenia */
+  box-sizing:border-box;
+}
+
+/* tel: 3 na wiersz */
+@media (max-width:600px){
+  .titles-flex .card{
+    flex: 0 0 calc((100% - 2 * 9px) / 3);
+    max-width: calc((100% - 2 * 9px) / 3);
+  }
+}
+
 
 </style>
 </head>
