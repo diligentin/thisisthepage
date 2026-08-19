@@ -35,25 +35,14 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 
   /* TITLES = flex, żeby ostatni rząd się wyśrodkował */
-.titles-flex{
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  justify-content:center; /* klucz: centrowanie ostatniego rzędu */
-  width:fit-content;
-  margin:0 auto;
-}
+.titles-flex{ display:flex; flex-wrap:wrap; gap:9px; justify-content:center; width:100%; margin:0 auto; }
 
 /* Każda karta ma mieć “szerokość pod 6 kolumn” (na desktopie) */
-.titles-flex .card{
-  flex: 0 0 calc((100% - 5 * 9px) / 6);
-}
+.titles-flex .card{ flex: 0 0 calc((100% - 5 * 9px) / 6);}
 
 /* przy <=600px ma być 3 na wiersz */
-@media(max-width:600px){
-  .titles-flex .card{
-    flex-basis: calc((100% - 2 * 9px) / 3);
-  }
+@media(max-width:600px){ 
+  .titles-flex .card{  flex-basis: calc((100% - 2 * 9px) / 3);  }
 }
 
 </style>
