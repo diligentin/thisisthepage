@@ -18,18 +18,16 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
-.auto-grid {
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:9px;
-  justify-items:center;
+.auto-grid{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;   /* centrowanie rzędów */
+  gap:9px;                    /* stałe odstępy między kaflami */
+}
 
-  /* ważne: usuń dopasowanie do zawartości */
-  width:100%;
-  margin:0 auto;
-
-  /* opcjonalnie, ale często pomaga wizualnie */
-  justify-content:center;
+.card{
+  /* ważne: niech kafle nie skurczą się dziwnie */
+  flex: 0 0 auto;
 }
 
 
