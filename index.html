@@ -18,7 +18,6 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
-/* bazowo: 6 na szerokim */
 .auto-grid{
   display:flex;
   flex-wrap:wrap;
@@ -26,18 +25,32 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
   gap:9px;
 }
 
+/* nie narzucamy min-width, max-width ani flex-basis na siłę */
 .auto-grid .card{
-  flex: 1 1 150px;   /* start od “naturalnego” */
-  max-width:150px;
+  flex: 0 0 auto;
+}
+
+/* zostawiamy Twoje istniejące reguły dla rozmiaru obrazków, np: 
+   .card.square img { width:100%; max-width:150px; ... }
+   .card.tall img   { width:100%; max-width:150px; ... }
+*/
+.auto-grid .card img{
+  display:block;
 }
 
 /* gdy ekran jest dość wąski, przechodzimy na tryb 3 na rząd */
 @media (max-width: 600px){
-  .auto-grid .card{
-    flex: 1 1 120px; /* dobierz w praktyce */
-    max-width:120px;
+  .card.square img,
+  .card.tall img{
+    max-width: 110px;  /* dobierz liczbę */
+  }
+
+  /* opcjonalnie, jeśli chcesz dopasować “gęstość” na mobile */
+  .auto-grid{
+    gap: 9px; /* zostaw jak jest, albo zmień jeśli chcesz */
   }
 }
+
 
 
 .card { text-decoration:none; color:white; text-align:center; }
