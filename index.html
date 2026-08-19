@@ -18,18 +18,34 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
-.auto-flex{
+.section-block .titles-flex{
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* wyśrodkuje ostatni „rząd” jako grupę */
+  justify-content: center;
   gap: 9px;
-
   width: 100%;
+  margin: 0 auto;
   box-sizing: border-box;
+  align-content: flex-start;
 }
 
+.section-block .titles-flex > .card{
+  box-sizing: border-box;
+  flex: 0 0 calc((100% - 5 * 9px) / 6);
+  max-width: calc((100% - 5 * 9px) / 6);
+}
 
-.card{  width: 150px;      /* dopasuj do swoich max-width=150px w obrazach */  flex: 0 0 150px;  /* niech nie rośnie i nie kurczy się */  text-decoration:none;  color:white;  text-align:center;}
+/* MOBILE: wymuś 3 na wiersz */
+@media (max-width: 600px){
+  .section-block .titles-flex{
+    gap: 9px;
+  }
+
+  .section-block .titles-flex > .card{
+    flex: 0 0 calc((100% - 2 * 9px) / 3);
+    max-width: calc((100% - 2 * 9px) / 3);
+  }
+}
 .card img{
   width: 100%;
   height: 100%;
@@ -44,8 +60,7 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .card.tall img { width:100%; max-width:150px; border-radius:2px; aspect-ratio:5/9; object-fit:cover;}
 
-@media (max-width: 600px){  .section-block .titles-flex > .card{    flex: 0 0 110px; max-width: 58px;  }
-   }
+  }
 
 </style>
 </head>
