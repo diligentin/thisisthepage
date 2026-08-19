@@ -30,40 +30,13 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .card.tall img { width:100%; max-width:150px; aspect-ratio:5/9; object-fit:cover;}
 
-/* TITLES: włącz dokładnie ten sam gap jak chapters (9px) i usuń wpływ zaokrągleń */
-.section-block .titles-flex{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 9px;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-  align-content: flex-start;
-
-  /* ważne: jak szerokości się zaokrąglają, czasem pojawia się “dodatkowy” margines wizualny */
-  overflow: hidden;
-}
-
-.section-block .titles-flex > .card{
-  box-sizing: border-box;
-  /* zamiast 100% używamy 100vw-korekta w ramach sekcji przez padding: u Ciebie sekcja ma padding 9px,
-     więc to ogranicza różnice przy szerokościach “pomiędzy” */
-  flex: 0 0 calc((100% - 5 * 9px) / 6);
-  max-width: calc((100% - 5 * 9px) / 6);
-}
-
-/* MOBILKA */
-@media (max-width: 600px){
-  .section-block .titles-flex{
-    gap: 9px;
-  }
-  .section-block .titles-flex > .card{
-    flex: 0 0 calc((100% - 2 * 9px) / 3);
-    max-width: calc((100% - 2 * 9px) / 3);
-  }
-}
-          
+/* ===================== TITLES: FLEX (6 -> 3) ===================== */.section-block .titles-flex{  display: flex;  flex-wrap: wrap;  justify-content: center; /* wyśrodkuj także “ogon” */  gap: 9px;  width: 100%;  margin: 0 auto;  box-sizing: border-box;  align-content: flex-start;}
+.section-block .titles-flex > .card{  box-sizing: border-box;  flex: 0 0 calc((100% - 5 * 9px) / 6);  max-width: calc((100% - 5 * 9px) / 6);}
+@media (max-width: 600px){  /* CHAPTERS: grid (6 -> 3) */  .auto-grid {    grid-template-columns: repeat(3, 1fr);    gap: 9px;    margin-bottom: 9px;  }
+  /* grafika tytułu */  .section-title-img { width: 58%; }
+  /* TITLES: flex (6 -> 3) */  .section-block .titles-flex{    gap: 9px;    width: 100%;    justify-content: center;  }
+  .section-block .titles-flex > .card{    flex: 0 0 calc((100% - 2 * 9px) / 3);    max-width: calc((100% - 2 * 9px) / 3);  }
+                      
   }
 
 
