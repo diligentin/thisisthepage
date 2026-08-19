@@ -21,15 +21,22 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 .auto-grid{
   display:flex;
   flex-wrap:wrap;
-  justify-content:center;   /* centrowanie rzędów */
-  gap:9px;                    /* stałe odstępy między kaflami */
+  justify-content:center;
+  gap:9px;
 }
 
-.card{
-  /* ważne: niech kafle nie skurczą się dziwnie */
-  flex: 0 0 auto;
+/* wszystkie kafle w każdej auto-grid */
+.auto-grid .card{
+  flex: 1 1 150px;     /* naturalny rozmiar i wspólne kurczenie */
+  max-width: 150px;   /* nie większe niż “naturalne” */
+  min-width: calc((100% - 2 * 9px) / 3); /* próg: dopiero gdy nie wyjdzie 3 na rząd */
 }
 
+.auto-grid .card img{
+  width:100%;
+  height:auto;
+  display:block;
+}
 
 .card { text-decoration:none; color:white; text-align:center; }
 .card img { transition: filter .25s ease;}
