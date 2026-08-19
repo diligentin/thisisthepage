@@ -18,38 +18,13 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
-.auto-grid{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:9px;
-}
-
-/* nie narzucamy min-width, max-width ani flex-basis na siłę */
-.auto-grid .card{
-  flex: 0 0 auto;
-}
-
-/* zostawiamy Twoje istniejące reguły dla rozmiaru obrazków, np: 
-   .card.square img { width:100%; max-width:150px; ... }
-   .card.tall img   { width:100%; max-width:150px; ... }
-*/
-.auto-grid .card img{
-  display:block;
-}
-
-/* gdy ekran jest dość wąski, przechodzimy na tryb 3 na rząd */
-@media (max-width: 600px){
-  .card.square img,
-  .card.tall img{
-    max-width: 58px;  /* dobierz liczbę */
-  }
-
-  /* opcjonalnie, jeśli chcesz dopasować “gęstość” na mobile */
-  .auto-grid{
-    gap: 9px; /* zostaw jak jest, albo zmień jeśli chcesz */
-  }
-}
+/* TITLES: flex */.titles-flex{  display: flex;  flex-wrap: wrap;  gap: 16px;}
+/* ustaw szerokość “tile” tytułów jak chcesz (przykład: 6 na szerokim) */.titles-flex > *{  flex: 0 0 calc((100% - 5 * 16px) / 6);}
+/* gdy wąsko, przełącz na 3 */@media (max-width: 900px){  .titles-flex > *{    flex-basis: calc((100% - 2 * 16px) / 3);  }}
+/* tel: 1 */@media (max-width: 600px){  .titles-flex > *{    flex-basis: 100%;  }}
+/* CHAPTERS: grid (jak wcześniej: 6 na szerokim) */.chapters-grid{  display: grid;  gap: 16px;  grid-template-columns: repeat(6, minmax(0, 1fr));}
+@media (max-width: 900px){  .chapters-grid{    grid-template-columns: repeat(3, minmax(0, 1fr));  }}
+@media (max-width: 600px){  .chapters-grid{    grid-template-columns: repeat(1, minmax(0, 1fr));  }}
 
 
 
@@ -76,7 +51,10 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 <div class="section-block">
   <img class="section-title-img" src="https://diligentin.github.io/main/nowy.png">
 
-  <div id="titles-grid" class="auto-grid">
+   
+    <!-- rozdziały (obrazki) -->
+  <div id="chapters-grid" class="chapters-grid">  
+
 
     <a class="card square" href="reader.html?comic=at&chapter=2">
       <img src="https://diligentin.github.io/main/nr/afos60.jpg">
@@ -108,8 +86,10 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 <!-- WSZYSTKIE SERIE -->
 <div class="section-block">
   <img class="section-title-img" src="https://diligentin.github.io/main/wszystkie.png">
-
-  <div id="titles-grid-1" class="auto-grid">
+  
+  <!-- tytuły -->
+    <div id="titles-grid" class="titles-flex"> 
+  
 
     <a class="card tall" href="series.html?comic=afos">
       <img src="https://diligentin.github.io/main/cov/!afos-pl.jpg">
