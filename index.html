@@ -18,21 +18,25 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
-.auto-grid{
-  display: grid;
+.auto-flex{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* wyśrodkuje ostatni „rząd” jako grupę */
   gap: 9px;
-  justify-items: center;
-  justify-content: center;
 
   width: 100%;
   box-sizing: border-box;
-
-  grid-template-columns: repeat(auto-fit, minmax(150px, 150px));
 }
 
 
-.card { text-decoration:none; color:white; text-align:center; }
-.card img { transition: filter .25s ease;}
+.card{  width: 150px;      /* dopasuj do swoich max-width=150px w obrazach */  flex: 0 0 150px;  /* niech nie rośnie i nie kurczy się */  text-decoration:none;  color:white;  text-align:center;}
+.card img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
 .card:hover img { transform: none; filter: brightness(0.8);}
 
 
@@ -63,7 +67,7 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 <div class="section-block">
   <img class="section-title-img" src="https://diligentin.github.io/main/nowy.png">
 
-  <div id="titles-grid" class="auto-grid">
+  <div id="titles-grid" class="auto-flex">
 
     <a class="card square" href="reader.html?comic=at&chapter=2">
       <img src="https://diligentin.github.io/main/nr/afos60.jpg">
@@ -96,7 +100,7 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 <div class="section-block">
   <img class="section-title-img" src="https://diligentin.github.io/main/wszystkie.png">
 
-  <div id="titles-grid-1" class="auto-grid">
+  <div id="titles-grid-1" class="auto-flex">
 
     <a class="card tall" href="series.html?comic=afos">
       <img src="https://diligentin.github.io/main/cov/!afos-pl.jpg">
