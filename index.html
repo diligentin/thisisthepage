@@ -30,16 +30,38 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .card.tall img { width:100%; max-width:150px; aspect-ratio:5/9; object-fit:cover;}
 
-/* ===================== TITLES: FLEX (6 -> 3) ===================== */
-.section-block .titles-flex{  display: flex;  flex-wrap: wrap;  justify-content: center; /* wyśrodkuj także “ogon” */  gap: 9px;  width: 100%;  margin: 0 auto;  box-sizing: border-box;  align-content: flex-start;}
-.section-block .titles-flex > .card{  box-sizing: border-box;  flex: 0 0 calc((100% - 5 * 9px) / 6);  max-width: calc((100% - 5 * 9px) / 6);}
+/* TITLES (flex) - stałe odstępy jak w grid */
+.section-block .titles-flex{
+  display:flex;
+  flex-wrap:wrap;
 
-  @media (max-width: 600px){  /* CHAPTERS: grid (6 -> 3) */  .auto-grid {    grid-template-columns: repeat(3, 1fr);    gap: 9px;    margin-bottom: 9px;  }
-  /* grafika tytułu */  .section-title-img { width: 58%; }
-  /* TITLES: flex (6 -> 3) */  .section-block .titles-flex{    gap: 9px;    width: 100%;    justify-content: center;  }
-  .section-block .titles-flex > .card{    flex: 0 0 calc((100% - 2 * 9px) / 3);    max-width: calc((100% - 2 * 9px) / 3);  }
-                      
+  gap: 9px;
+  justify-content: center;
+
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;              /* ważne: żeby nie dodać dodatkowych “offsetów” */
+  box-sizing: border-box;
+
+  align-items: flex-start;
+}
+
+/* karta ma zajmować dokładnie 1/6 albo 1/3 „tabeli” */
+.section-block .titles-flex > .card{
+  flex: 0 0 16.6666667%;
+}
+
+/* Jeśli jest .tall / .square i różne proporcje, to niech img nie dodają luzu */
+.section-block .titles-flex > .card img{
+  display:block;
+}
+
+@media(max-width:600px){
+  .section-block .titles-flex > .card{
+    flex: 0 0 33.3333333%;
   }
+}
+
 
 
 </style>
