@@ -34,15 +34,14 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
   .section-title-img { width:58%; }
 
 
-/* wymuś, żeby titles-flex brał pełną szerokość kontenera */
+/* TITLES (desktop) */
 .section-block .titles-flex{
-  width: 100%;
-  justify-content: center; /* wyśrodkuj ostatni rząd */
-}
-
-/* pokaż karty z dokładnym gap=9px i wyliczoną szerokością */
-.section-block .titles-flex{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 9px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .section-block .titles-flex .card{
@@ -50,7 +49,12 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
   flex: 0 0 calc((100% - 5 * 9px) / 6);
   max-width: calc((100% - 5 * 9px) / 6);
 }
+
+/* TITLES (mobile) */
 @media(max-width:600px){
+  .auto-grid { grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:9px; }
+  .section-title-img { width:58%; }
+
   .section-block .titles-flex .card{
     flex: 0 0 calc((100% - 2 * 9px) / 3);
     max-width: calc((100% - 2 * 9px) / 3);
