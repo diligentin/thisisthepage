@@ -18,25 +18,27 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
+/* bazowo: 6 na szerokim */
 .auto-grid{
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
-  gap:11px;
+  gap:9px;
 }
 
-/* wszystkie kafle w każdej auto-grid */
 .auto-grid .card{
-  flex: 1 1 150px;     /* naturalny rozmiar i wspólne kurczenie */
-  max-width: 150px;   /* nie większe niż “naturalne” */
-  min-width: calc((100% - 2 * 9px) / 3); /* próg: dopiero gdy nie wyjdzie 3 na rząd */
+  flex: 1 1 150px;   /* start od “naturalnego” */
+  max-width:150px;
 }
 
-.auto-grid .card img{
-  width:100%;
-  height:auto;
-  display:block;
+/* gdy ekran jest dość wąski, przechodzimy na tryb 3 na rząd */
+@media (max-width: 600px){
+  .auto-grid .card{
+    flex: 1 1 120px; /* dobierz w praktyce */
+    max-width:120px;
+  }
 }
+
 
 .card { text-decoration:none; color:white; text-align:center; }
 .card img { transition: filter .25s ease;}
@@ -46,14 +48,6 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 .card.square img { width:100%; max-width:150px; border-radius:2px; aspect-ratio:1/1; object-fit:cover;}
 
 .card.tall img { width:100%; max-width:150px; aspect-ratio:5/9; object-fit:cover;}
-
-@media(max-width:600px){
-  .auto-grid { 
-    /* usuń grid-template-columns */
-    margin-bottom:9px;
-  }
-  .section-title-img { width:58%; }
-}
 
 }
 </style>
