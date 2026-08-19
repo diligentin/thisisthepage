@@ -19,26 +19,17 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
 .auto-grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
+  display: grid;
   gap: 9px;
-  justify-items:center;
+  justify-items: center;
+  justify-content: center;
 
   width: 100%;
   box-sizing: border-box;
-  margin: 0;
+
+  grid-template-columns: repeat(auto-fit, minmax(150px, 150px));
 }
 
-.auto-grid2{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap: 9px;
-  justify-items:center;
-
-  width: 100%;
-  box-sizing: border-box;
-  margin: 0;
-}
 
 .card { text-decoration:none; color:white; text-align:center; }
 .card img { transition: filter .25s ease;}
@@ -155,9 +146,7 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
     <a class="card tall" href="series.html?comic=ub">
       <img src="https://diligentin.github.io/main/cov/!ub.jpg">
     </a>
-
-     </div>
-    <div id="titles-grid-2" class="auto-grid2">
+    
     
     <a class="card tall" href="series.html?comic=wf">
       <img src="https://diligentin.github.io/main/cov/!wf.jpg">
