@@ -105,101 +105,170 @@ a { color: white; text-decoration: none; }
   document.getElementById("header-img").src = data.header_img;
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
-  const container = document.getElementById("chapters-container");
+ const container = document.getElementById("chapters-container");
 
-  /* ⭐ PRZYWRÓCONE STARE SORTOWANIE ⭐ */
-  const sorted = Object.keys(data.chapters).sort((a,b)=>{
-      const na = parseInt(a);
-      const nb = parseInt(b);
-      const ha = !isNaN(na);
-      const hb = !isNaN(nb);
 
-      if (ha && hb) {
-        if (na !== nb) return na - nb;
-        return a.localeCompare(b);
+/*
+ * Kolejność rozdziałów pobrana z surowego JSON-a,
+ * dokładnie tak jak w readerze.
+ */
+const sorted = [];
+
+rawJson.replace(
+  /"chapters"\s*:\s*{([\s\S]*?)}/,
+  (match, inner) => {
+    inner.replace(
+      /"([^"]+)"\s*:/g,
+      (_, chapterName) => {
+        sorted.push(chapterName);
       }
-      if (ha) return -1;
-      if (hb) return 1;
-      return a.localeCompare(b);
+    );
+  }
+);
+
+
+/*
+ * Usunięcie ewentualnych duplikatów
+ * bez zmiany kolejności.
+ */
+const uniqueSorted = [
+  ...new Set(sorted)
+];
+
+
+/* FUNKCJA TWORZENIA PRZYCISKU */
+function makeBtn(num) {
+  const a = document.createElement("a");
+
+  a.href =
+    `reader.html?comic=${comicKey}` +
+    `&chapter=${encodeURIComponent(num)}`;
+
+  const btn = document.createElement("div");
+  btn.className = "chapter-btn";
+  btn.textContent = num;
+
+  if (
+    localStorage.getItem(`read_${comicKey}_${num}`) === "1"
+  ) {
+    btn.classList.add("visited");
+  }
+
+  a.appendChild(btn);
+  return a;
+}
+
+
+/* BEZ SEZONÓW */
+if (!data.seasons) {
+  const grid = document.createElement("div");
+  grid.className = "chapter-grid";
+
+  uniqueSorted.forEach(num => {
+    grid.appendChild(makeBtn(num));
   });
 
-  /* FUNKCJA TWORZENIA PRZYCISKU */
-  function makeBtn(num) {
-    const a = document.createElement("a");
-    a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
+  container.appendChild(grid);
+  return;
+}
 
-    const btn = document.createElement("div");
-    btn.className = "chapter-btn";
-    btn.textContent = num;
 
-    if (localStorage.getItem(`read_${comicKey}_${num}`) === "1")
-      btn.classList.add("visited");
+/* Z SEZONAMI */
+for (const [seasonName, range] of Object.entries(data.seasons)) {
 
-    a.appendChild(btn);
-    return a;
-  }
+  const from =
+    range.from === "∞"
+      ? Infinity
+      : isNaN(parseInt(range.from))
+        ? range.from
+        : parseInt(range.from);
 
-  /* BEZ SEZONÓW */
-  if (!data.seasons) {
-    const grid = document.createElement("div");
-    grid.className = "chapter-grid";
-    sorted.forEach(num => grid.appendChild(makeBtn(num)));
-    container.appendChild(grid);
-    return;
-  }
+  const to =
+    range.to === "∞"
+      ? Infinity
+      : isNaN(parseInt(range.to))
+        ? range.to
+        : parseInt(range.to);
 
-  /* ⭐ Z SEZONAMI — DZIAŁA JAK STARY KOD ⭐ */
-  for (const [seasonName, range] of Object.entries(data.seasons)) {
 
-    const from = range.from === "∞" ? Infinity :
-                 isNaN(parseInt(range.from)) ? range.from : parseInt(range.from);
+  const h = document.createElement("h3");
+  h.style.textAlign = "center";
+  h.style.fontWeight = "50";
+  h.style.fontSize = "20px";
+  h.style.marginTop = "10px";
+  h.textContent = seasonName;
 
-    const to   = range.to === "∞" ? Infinity :
-                 isNaN(parseInt(range.to)) ? range.to : parseInt(range.to);
+  container.appendChild(h);
 
-    const h = document.createElement("h3");
-    h.style.textAlign = "center";
-    h.style.fontWeight = "50";
-    h.style.fontSize = "20px";
-    h.style.marginTop = "10px";
-    h.textContent = seasonName;
-    container.appendChild(h);
 
-    const grid = document.createElement("div");
-    grid.className = "chapter-grid";
+  const grid = document.createElement("div");
+  grid.className = "chapter-grid";
 
-    sorted.forEach(num => {
 
-      let fits = false;
+  uniqueSorted.forEach(num => {
 
-      /* 1) numeryczne w zakresie */
-      if (typeof from === "number" && typeof to === "number") {
-        const n = parseInt(num);
-        if (!isNaN(n) && n >= from && n <= to) fits = true;
-      }
+    let fits = false;
 
-      /* 2) from jako string → dopasowanie dokładne */
-      if (typeof from === "string" && num === from) {
+
+    /* 1) numeryczne w zakresie */
+    if (
+      typeof from === "number" &&
+      typeof to === "number"
+    ) {
+      const n = parseInt(num);
+
+      if (
+        !isNaN(n) &&
+        n >= from &&
+        n <= to
+      ) {
         fits = true;
       }
+    }
 
-      /* 3) to = Infinity → wszystko od from */
-      if (to === Infinity && typeof from === "number") {
-        const n = parseInt(num);
-        if (!isNaN(n) && n >= from) fits = true;
-      }
 
-      /* ⭐ 4) ROZDZIAŁY Z EMOJI — STARY KOD TEŻ JE WPUSZCZAŁ DO SEZONU
-            jeśli sortowanie ustawiło je między numerami */
-      if (isNaN(parseInt(num))) {
+    /* 2) from jako string — dokładne dopasowanie */
+    if (
+      typeof from === "string" &&
+      num === from
+    ) {
+      fits = true;
+    }
+
+
+    /* 3) to = Infinity — wszystko od from */
+    if (
+      to === Infinity &&
+      typeof from === "number"
+    ) {
+      const n = parseInt(num);
+
+      if (
+        !isNaN(n) &&
+        n >= from
+      ) {
         fits = true;
       }
+    }
 
-      if (fits) grid.appendChild(makeBtn(num));
-    });
 
-    container.appendChild(grid);
-  }
+    /*
+     * 4) Rozdziały specjalne:
+     * bonus, ❤️, ą, 000🎈 itd.
+     */
+    if (isNaN(parseInt(num))) {
+      fits = true;
+    }
+
+
+    if (fits) {
+      grid.appendChild(makeBtn(num));
+    }
+  });
+
+
+  container.appendChild(grid);
+}
 
 })();
 </script>
