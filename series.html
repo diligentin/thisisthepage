@@ -108,31 +108,6 @@ a { color: white; text-decoration: none; }
   const container = document.getElementById("chapters-container");
 
 
-/*
- * Obsługiwane formaty:
- *
- * 1. Obiekt:
- * {
- *   "chapters": {
- *     "1": {},
- *     "bonus": {},
- *     "❤️": {},
- *     "2": {}
- *   }
- * }
- *
- * 2. Tablica:
- * {
- *   "chapters": [
- *     "1",
- *     "bonus",
- *     "❤️",
- *     "2"
- *   ]
- * }
- */
-
-
 let chapterOrder;
 
 if (Array.isArray(data.chapters)) {
