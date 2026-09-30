@@ -105,14 +105,14 @@ a { color: white; text-decoration: none; }
   document.getElementById("header-img").src = data.header_img;
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
-  const container = document.getElementById("chapters-container");
+const container = document.getElementById("chapters-container");
 
 
 /*
  * Pobieramy kolejność rozdziałów bezpośrednio z surowego JSON-a.
  * Dzięki temu kolejność jest identyczna jak w readerze.
  */
-const uniqueChapterOrder = [];
+const chapterOrder = [];
 
 rawJson.replace(
   /"chapters"\s*:\s*{([\s\S]*?)}/,
@@ -175,8 +175,22 @@ if (!data.seasons) {
 }
 
 
-/* Z SEZONAMI */
-
+/*
+ * Z SEZONAMI
+ *
+ * Rozdziały są sprawdzane według wartości numerowej,
+ * ale wyświetlane w kolejności z JSON-a.
+ *
+ * Dzięki temu:
+ *
+ * Tom 1: 1–9.3
+ * obejmie:
+ * 1, 2, 3, ..., 9, 9.1, 9.2, 9.3
+ *
+ * Tom 2: 10–∞
+ * obejmie:
+ * 10, 11, ..., 19, 13.1, 18.1, 18.2 itd.
+ */
 const addedChapters = new Set();
 
 for (const [seasonName, range] of Object.entries(data.seasons)) {
@@ -186,45 +200,11 @@ for (const [seasonName, range] of Object.entries(data.seasons)) {
     ? "∞"
     : String(range.to);
 
+  const fromNumber = Number(fromName);
 
-  /*
-   * Szukamy pozycji rozdziału w kolejności z JSON-a.
-   */
-  const fromIndex = uniqueChapterOrder.indexOf(fromName);
-
-  if (fromIndex === -1) {
-    console.warn(
-      `Nie znaleziono rozdziału początkowego sezonu "${seasonName}": ${fromName}`
-    );
-    continue;
-  }
-
-
-  /*
-   * "∞" oznacza wszystkie rozdziały do końca.
-   */
-  let toIndex;
-
-  if (toName === "∞") {
-    toIndex = uniqueChapterOrder.length - 1;
-  } else {
-    toIndex = uniqueChapterOrder.indexOf(toName);
-
-    if (toIndex === -1) {
-      console.warn(
-        `Nie znaleziono rozdziału końcowego sezonu "${seasonName}": ${toName}`
-      );
-      continue;
-    }
-  }
-
-
-  /*
-   * Jeśli zakres został wpisany odwrotnie,
-   * zamieniamy jego granice.
-   */
-  const start = Math.min(fromIndex, toIndex);
-  const end = Math.max(fromIndex, toIndex);
+  const toNumber = toName === "∞"
+    ? Infinity
+    : Number(toName);
 
 
   const h = document.createElement("h3");
@@ -239,26 +219,102 @@ for (const [seasonName, range] of Object.entries(data.seasons)) {
   grid.className = "chapter-grid";
 
 
-  /*
-   * Pobieramy rozdziały według ich kolejności w JSON-ie,
-   * a nie według wartości liczbowej ani alfabetu.
-   */
-  for (let i = start; i <= end; i++) {
-    const chapterName = uniqueChapterOrder[i];
+  uniqueChapterOrder.forEach(chapterName => {
 
     /*
-     * Zapobiega powielaniu rozdziałów,
-     * jeśli zakresy sezonów nachodzą na siebie.
+     * Rozdział już został dodany do wcześniejszego tomu.
      */
     if (addedChapters.has(chapterName)) {
-      continue;
+      return;
     }
 
-    addedChapters.add(chapterName);
-    grid.appendChild(makeBtn(chapterName));
-  }
+
+    const chapterNumber = Number(chapterName);
+    const isNumericChapter = !isNaN(chapterNumber);
+
+    let fits = false;
 
 
+    /*
+     * Zakres numeryczny.
+     *
+     * Przykład:
+     * from: "1", to: "9.3"
+     *
+     * Rozdziały 9.1, 9.2 i 9.3
+     * mają wartości mieszczące się w tym zakresie.
+     */
+    if (
+      isNumericChapter &&
+      !isNaN(fromNumber) &&
+      chapterNumber >= fromNumber &&
+      chapterNumber <= toNumber
+    ) {
+      fits = true;
+    }
+
+
+    /*
+     * Dokładne dopasowanie rozdziału tekstowego
+     * albo emoji.
+     *
+     * Przykład:
+     * from: "bonus", to: "bonus"
+     */
+    if (
+      !isNumericChapter &&
+      fromName === toName &&
+      chapterName === fromName
+    ) {
+      fits = true;
+    }
+
+
+    /*
+     * Rozdział tekstowy od wskazanego miejsca do końca.
+     *
+     * Przykład:
+     * from: "bonus", to: "∞"
+     */
+    if (
+      !isNumericChapter &&
+      chapterName === fromName &&
+      toName === "∞"
+    ) {
+      fits = true;
+    }
+
+
+    /*
+     * Nienumeryczne dodatki przy sezonie
+     * rozpoczynającym się numerem i trwającym do końca.
+     *
+     * Przykład:
+     * from: "10", to: "∞"
+     *
+     * Dzięki temu dodatki typu:
+     * ą, 000🎈, 69🎈, 888🎈
+     * trafiają do ostatniego tomu.
+     */
+    if (
+      !isNumericChapter &&
+      !isNaN(fromNumber) &&
+      toName === "∞"
+    ) {
+      fits = true;
+    }
+
+
+    if (fits) {
+      addedChapters.add(chapterName);
+      grid.appendChild(makeBtn(chapterName));
+    }
+  });
+
+
+  /*
+   * Nie pokazujemy pustego tomu.
+   */
   if (grid.children.length > 0) {
     container.appendChild(h);
     container.appendChild(grid);
