@@ -107,99 +107,188 @@ a { color: white; text-decoration: none; }
 
   const container = document.getElementById("chapters-container");
 
-  /* ⭐ PRZYWRÓCONE STARE SORTOWANIE ⭐ */
-  const sorted = Object.keys(data.chapters).sort((a,b)=>{
-      const na = parseInt(a);
-      const nb = parseInt(b);
-      const ha = !isNaN(na);
-      const hb = !isNaN(nb);
+/*
+ * Kolejność rozdziałów jest dokładnie taka,
+ * jak kolejność wpisów w data.chapters w JSON-ie.
+ *
+ * Nie używamy tutaj sortowania, ponieważ nazwy rozdziałów
+ * mogą zawierać liczby, litery, emoji i znaki specjalne.
+ */
+const chapterOrder = Object.keys(data.chapters);
 
-      if (ha && hb) {
-        if (na !== nb) return na - nb;
-        return a.localeCompare(b);
-      }
-      if (ha) return -1;
-      if (hb) return 1;
-      return a.localeCompare(b);
+
+/* FUNKCJA TWORZENIA PRZYCISKU */
+function makeBtn(chapterName) {
+  const a = document.createElement("a");
+
+  a.href =
+    `reader.html?comic=${encodeURIComponent(comicKey)}` +
+    `&chapter=${encodeURIComponent(chapterName)}`;
+
+  const btn = document.createElement("div");
+  btn.className = "chapter-btn";
+  btn.textContent = chapterName;
+
+  if (
+    localStorage.getItem(`read_${comicKey}_${chapterName}`) === "1"
+  ) {
+    btn.classList.add("visited");
+  }
+
+  a.appendChild(btn);
+  return a;
+}
+
+
+/* BEZ SEZONÓW */
+if (!data.seasons) {
+  const grid = document.createElement("div");
+  grid.className = "chapter-grid";
+
+  const addedChapters = new Set();
+
+  chapterOrder.forEach(chapterName => {
+    if (addedChapters.has(chapterName)) return;
+
+    addedChapters.add(chapterName);
+    grid.appendChild(makeBtn(chapterName));
   });
 
-  /* FUNKCJA TWORZENIA PRZYCISKU */
-  function makeBtn(num) {
-    const a = document.createElement("a");
-    a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
+  container.appendChild(grid);
+  return;
+}
 
-    const btn = document.createElement("div");
-    btn.className = "chapter-btn";
-    btn.textContent = num;
 
-    if (localStorage.getItem(`read_${comicKey}_${num}`) === "1")
-      btn.classList.add("visited");
+/* Z SEZONAMI */
+const addedChapters = new Set();
 
-    a.appendChild(btn);
-    return a;
-  }
+for (const [seasonName, range] of Object.entries(data.seasons)) {
 
-  /* BEZ SEZONÓW */
-  if (!data.seasons) {
-    const grid = document.createElement("div");
-    grid.className = "chapter-grid";
-    sorted.forEach(num => grid.appendChild(makeBtn(num)));
-    container.appendChild(grid);
-    return;
-  }
+  const from =
+    range.from === "∞"
+      ? Infinity
+      : isNaN(Number(range.from))
+        ? range.from
+        : Number(range.from);
 
-  /* ⭐ Z SEZONAMI — DZIAŁA JAK STARY KOD ⭐ */
-  for (const [seasonName, range] of Object.entries(data.seasons)) {
+  const to =
+    range.to === "∞"
+      ? Infinity
+      : isNaN(Number(range.to))
+        ? range.to
+        : Number(range.to);
 
-    const from = range.from === "∞" ? Infinity :
-                 isNaN(parseInt(range.from)) ? range.from : parseInt(range.from);
 
-    const to   = range.to === "∞" ? Infinity :
-                 isNaN(parseInt(range.to)) ? range.to : parseInt(range.to);
+  const h = document.createElement("h3");
+  h.style.textAlign = "center";
+  h.style.fontWeight = "50";
+  h.style.fontSize = "20px";
+  h.style.marginTop = "10px";
+  h.textContent = seasonName;
 
-    const h = document.createElement("h3");
-    h.style.textAlign = "center";
-    h.style.fontWeight = "50";
-    h.style.fontSize = "20px";
-    h.style.marginTop = "10px";
-    h.textContent = seasonName;
-    container.appendChild(h);
+  container.appendChild(h);
 
-    const grid = document.createElement("div");
-    grid.className = "chapter-grid";
 
-    sorted.forEach(num => {
+  const grid = document.createElement("div");
+  grid.className = "chapter-grid";
 
-      let fits = false;
 
-      /* 1) numeryczne w zakresie */
-      if (typeof from === "number" && typeof to === "number") {
-        const n = parseInt(num);
-        if (!isNaN(n) && n >= from && n <= to) fits = true;
-      }
+  chapterOrder.forEach(chapterName => {
 
-      /* 2) from jako string → dopasowanie dokładne */
-      if (typeof from === "string" && num === from) {
+    /*
+     * Ten sam rozdział nie może pojawić się ponownie,
+     * nawet jeśli pasuje do kilku sezonów.
+     */
+    if (addedChapters.has(chapterName)) return;
+
+
+    let fits = false;
+
+    const chapterNumber = Number(chapterName);
+    const isNumericChapter = !isNaN(chapterNumber);
+
+
+    /*
+     * 1. Zakres numeryczny, np. from: 1, to: 10
+     */
+    if (
+      typeof from === "number" &&
+      typeof to === "number" &&
+      isNumericChapter
+    ) {
+      if (
+        chapterNumber >= from &&
+        chapterNumber <= to
+      ) {
         fits = true;
       }
+    }
 
-      /* 3) to = Infinity → wszystko od from */
-      if (to === Infinity && typeof from === "number") {
-        const n = parseInt(num);
-        if (!isNaN(n) && n >= from) fits = true;
-      }
 
-      /* ⭐ 4) ROZDZIAŁY Z EMOJI — STARY KOD TEŻ JE WPUSZCZAŁ DO SEZONU
-            jeśli sortowanie ustawiło je między numerami */
-      if (isNaN(parseInt(num))) {
-        fits = true;
-      }
+    /*
+     * 2. Dokładne dopasowanie tekstowe,
+     * np. from: "bonus" albo from: "❤️"
+     */
+    if (
+      typeof from === "string" &&
+      chapterName === from
+    ) {
+      fits = true;
+    }
 
-      if (fits) grid.appendChild(makeBtn(num));
-    });
+    if (
+      typeof to === "string" &&
+      chapterName === to
+    ) {
+      fits = true;
+    }
 
+
+    /*
+     * 3. Wszystko od określonego numeru wzwyż,
+     * np. from: 5, to: "∞"
+     */
+    if (
+      to === Infinity &&
+      typeof from === "number" &&
+      isNumericChapter &&
+      chapterNumber >= from
+    ) {
+      fits = true;
+    }
+
+
+    /*
+     * 4. Specjalny rozdział wskazany dokładnie w zakresie,
+     * np. from: "bonus", to: "bonus"
+     */
+    if (
+      typeof from === "string" &&
+      typeof to === "string" &&
+      from === to &&
+      chapterName === from
+    ) {
+      fits = true;
+    }
+
+
+    if (fits) {
+      addedChapters.add(chapterName);
+      grid.appendChild(makeBtn(chapterName));
+    }
+  });
+
+
+  /*
+   * Nie dodawaj pustych sezonów.
+   */
+  if (grid.children.length > 0) {
     container.appendChild(grid);
+  } else {
+    h.remove();
   }
+}
+
 
 })();
 </script>
