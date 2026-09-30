@@ -107,14 +107,69 @@ a { color: white; text-decoration: none; }
 
   const container = document.getElementById("chapters-container");
 
+
 /*
- * Kolejność rozdziałów jest dokładnie taka,
- * jak kolejność wpisów w data.chapters w JSON-ie.
+ * Obsługiwane formaty:
  *
- * Nie używamy tutaj sortowania, ponieważ nazwy rozdziałów
- * mogą zawierać liczby, litery, emoji i znaki specjalne.
+ * 1. Obiekt:
+ * {
+ *   "chapters": {
+ *     "1": {},
+ *     "bonus": {},
+ *     "❤️": {},
+ *     "2": {}
+ *   }
+ * }
+ *
+ * 2. Tablica:
+ * {
+ *   "chapters": [
+ *     "1",
+ *     "bonus",
+ *     "❤️",
+ *     "2"
+ *   ]
+ * }
  */
-const chapterOrder = Object.keys(data.chapters);
+
+
+let chapterOrder;
+
+if (Array.isArray(data.chapters)) {
+  /*
+   * Wersja tablicowa — kolejność jest dokładnie taka,
+   * jak w JSON-ie.
+   */
+  chapterOrder = data.chapters.map(chapter => {
+    if (typeof chapter === "string") {
+      return chapter;
+    }
+
+    if (chapter && typeof chapter.name !== "undefined") {
+      return String(chapter.name);
+    }
+
+    if (chapter && typeof chapter.chapter !== "undefined") {
+      return String(chapter.chapter);
+    }
+
+    return String(chapter);
+  });
+} else {
+  /*
+   * Wersja obiektowa.
+   *
+   * Uwaga: numeryczne klucze obiektu JavaScript
+   * mogą zostać automatycznie uporządkowane numerycznie.
+   */
+  chapterOrder = Object.keys(data.chapters);
+}
+
+
+/*
+ * Usunięcie ewentualnych duplikatów przy zachowaniu kolejności.
+ */
+chapterOrder = [...new Set(chapterOrder)];
 
 
 /* FUNKCJA TWORZENIA PRZYCISKU */
@@ -140,17 +195,14 @@ function makeBtn(chapterName) {
 }
 
 
-/* BEZ SEZONÓW */
+/*
+ * BEZ SEZONÓW
+ */
 if (!data.seasons) {
   const grid = document.createElement("div");
   grid.className = "chapter-grid";
 
-  const addedChapters = new Set();
-
   chapterOrder.forEach(chapterName => {
-    if (addedChapters.has(chapterName)) return;
-
-    addedChapters.add(chapterName);
     grid.appendChild(makeBtn(chapterName));
   });
 
@@ -159,7 +211,9 @@ if (!data.seasons) {
 }
 
 
-/* Z SEZONAMI */
+/*
+ * Z SEZONAMI
+ */
 const addedChapters = new Set();
 
 for (const [seasonName, range] of Object.entries(data.seasons)) {
@@ -168,25 +222,15 @@ for (const [seasonName, range] of Object.entries(data.seasons)) {
     range.from === "∞"
       ? Infinity
       : isNaN(Number(range.from))
-        ? range.from
+        ? String(range.from)
         : Number(range.from);
 
   const to =
     range.to === "∞"
       ? Infinity
       : isNaN(Number(range.to))
-        ? range.to
+        ? String(range.to)
         : Number(range.to);
-
-
-  const h = document.createElement("h3");
-  h.style.textAlign = "center";
-  h.style.fontWeight = "50";
-  h.style.fontSize = "20px";
-  h.style.marginTop = "10px";
-  h.textContent = seasonName;
-
-  container.appendChild(h);
 
 
   const grid = document.createElement("div");
@@ -195,62 +239,36 @@ for (const [seasonName, range] of Object.entries(data.seasons)) {
 
   chapterOrder.forEach(chapterName => {
 
-    /*
-     * Ten sam rozdział nie może pojawić się ponownie,
-     * nawet jeśli pasuje do kilku sezonów.
-     */
-    if (addedChapters.has(chapterName)) return;
-
-
-    let fits = false;
+    if (addedChapters.has(chapterName)) {
+      return;
+    }
 
     const chapterNumber = Number(chapterName);
     const isNumericChapter = !isNaN(chapterNumber);
 
+    let fits = false;
+
 
     /*
-     * 1. Zakres numeryczny, np. from: 1, to: 10
+     * Zakres numeryczny, np. 1–10
      */
     if (
       typeof from === "number" &&
       typeof to === "number" &&
-      isNumericChapter
-    ) {
-      if (
-        chapterNumber >= from &&
-        chapterNumber <= to
-      ) {
-        fits = true;
-      }
-    }
-
-
-    /*
-     * 2. Dokładne dopasowanie tekstowe,
-     * np. from: "bonus" albo from: "❤️"
-     */
-    if (
-      typeof from === "string" &&
-      chapterName === from
-    ) {
-      fits = true;
-    }
-
-    if (
-      typeof to === "string" &&
-      chapterName === to
+      isNumericChapter &&
+      chapterNumber >= from &&
+      chapterNumber <= to
     ) {
       fits = true;
     }
 
 
     /*
-     * 3. Wszystko od określonego numeru wzwyż,
-     * np. from: 5, to: "∞"
+     * Wszystko od numeru wzwyż, np. from: 5, to: "∞"
      */
     if (
-      to === Infinity &&
       typeof from === "number" &&
+      to === Infinity &&
       isNumericChapter &&
       chapterNumber >= from
     ) {
@@ -259,13 +277,26 @@ for (const [seasonName, range] of Object.entries(data.seasons)) {
 
 
     /*
-     * 4. Specjalny rozdział wskazany dokładnie w zakresie,
+     * Pojedynczy rozdział tekstowy,
      * np. from: "bonus", to: "bonus"
      */
     if (
       typeof from === "string" &&
       typeof to === "string" &&
       from === to &&
+      chapterName === from
+    ) {
+      fits = true;
+    }
+
+
+    /*
+     * Zakres zaczynający się od rozdziału tekstowego.
+     * Np. from: "bonus"
+     */
+    if (
+      typeof from === "string" &&
+      to === Infinity &&
       chapterName === from
     ) {
       fits = true;
@@ -279,13 +310,17 @@ for (const [seasonName, range] of Object.entries(data.seasons)) {
   });
 
 
-  /*
-   * Nie dodawaj pustych sezonów.
-   */
   if (grid.children.length > 0) {
+    const h = document.createElement("h3");
+
+    h.style.textAlign = "center";
+    h.style.fontWeight = "50";
+    h.style.fontSize = "20px";
+    h.style.marginTop = "10px";
+    h.textContent = seasonName;
+
+    container.appendChild(h);
     container.appendChild(grid);
-  } else {
-    h.remove();
   }
 }
 
