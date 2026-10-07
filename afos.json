@@ -472,7 +472,13 @@
       "https://diligentin.github.io/afos/64/3.jpg",
       "https://diligentin.github.io/afos/64/4.jpg",
       "https://diligentin.github.io/afos/00afos.jpg"
-      ],
+        ],
+    "64 epilog": [ 
+      "https://diligentin.github.io/afos/00afos.jpg"
+     ],
+    "64e": [ 
+      "https://diligentin.github.io/afos/00afos.jpg"
+     ],
     "64.0": [ 
       "https://diligentin.github.io/afos/64.5/1.jpg",
       "https://diligentin.github.io/afos/00afos.jpg"
