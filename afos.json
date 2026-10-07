@@ -7,7 +7,7 @@
   "desc": "Hyunsun, prowadzący wyjątkowo zwyczajne życie, osiąga kamień milowy - 40. urodziny, Chcąc zacząć coś nowego zanim będzie za późno, zapisuje się do szkoły gitarowej. Tam spotyka młodego instruktora o imieniu Yeoreum i po raz pierwszy od dawna odczuwa prawdziwą pasję do życia. Gdy ich więź pogłębia się i Yeoreum zaczyna okazywać mu swoje szczere i ujmujące uczucia, ich relacja staje w obliczu nowej sytuacji…<br><br>*odcenzurowanie mieczy świetlnych - ruoye<br>Od ch. 44 są dwie wersje rozdziałów 18+:<br>♡ z cenzurą: oryginalna<br>❤️‍bez cenzury: jak dorysuję co trzeba<br>Wszystkie rozdziały przed 44 są tylko w wersji bez cenzury.",
   "seasons": {
   "1. sezon": { "from": "1", "to": "40" },
-  "2. sezon": { "from": "41", "to": "hp2" },
+  "2. sezon": { "from": "41", "to": "64.2" },
   "3. sezon": { "from": "65", "to": "∞" }
 },
   "padlet": "https://padlet.com/vvvvvvvvvvvvvvvv/a-first-of-summers-xvfowvg6hnywhy1s",
@@ -473,16 +473,19 @@
       "https://diligentin.github.io/afos/64/4.jpg",
       "https://diligentin.github.io/afos/00afos.jpg"
       ],
-    "64.5": [ 
+    "64.0": [ 
       "https://diligentin.github.io/afos/64.5/1.jpg",
       "https://diligentin.github.io/afos/00afos.jpg"
       ],
-    "hp1": [ 
+    "64.1": [ 
       "https://diligentin.github.io/afos/00afos.jpg"
        ],
-    "hp2": [ 
+    "64.2": [ 
       "https://diligentin.github.io/afos/00afos.jpg"
        ],
+    "64.3": [ 
+      "https://diligentin.github.io/afos/00afos.jpg"
+     ],
     "65": [ 
       "https://diligentin.github.io/afos/00afos.jpg"
     ]
